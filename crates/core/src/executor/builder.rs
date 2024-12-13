@@ -4,6 +4,7 @@ use sbv_primitives::{
     alloy_primitives::ChainId, zk_trie::db::kv::KVDatabase, zk_trie::db::NodeDb, B256,
 };
 use std::fmt::{self, Debug};
+use revm::State;
 
 /// Builder for EVM executor.
 pub struct EvmExecutorBuilder<'a, H, C, CodeDb, ZkDb> {
@@ -100,6 +101,7 @@ impl<'a, CodeDb: KVDatabase, ZkDb: KVDatabase + 'static>
             )?),
             "build ReadOnlyDB"
         );
+        let db = State::builder().with_database(db).without_state_clear().with_bundle_update().build();
 
         Ok(EvmExecutor {
             hardfork_config: self.hardfork_config,
