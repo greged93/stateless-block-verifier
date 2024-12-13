@@ -120,13 +120,6 @@ impl StatefulBlockExecutor {
             .build(storage_root_before)?;
         evm.handle_block(&block)?;
         let storage_root_after = evm.commit_changes()?;
-        if block.header.number == 141 {
-            let bundle = &evm.state().bundle_state;
-            dev_info!(
-                "bundle state for block {:?} {bundle:#?}",
-                block.header.number
-            );
-        }
         self.history_db
             .set_block_storage_root(block_number, storage_root_after)?;
 
@@ -165,6 +158,15 @@ impl StatefulBlockExecutor {
                         )
                         .await?;
                     }
+
+                    let storage_root = self
+                        .history_db
+                        .get_block_storage_root(block_number - 1)?
+                        .unwrap();
+                    dev_info!(
+                        "storage root {storage_root:?}, for block #{:}",
+                        block_number - 1
+                    );
 
                     let execute_start = std::time::Instant::now();
                     match self.execute_block(&block) {

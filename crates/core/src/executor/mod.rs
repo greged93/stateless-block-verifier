@@ -152,9 +152,6 @@ impl<CodeDb: KVDatabase, ZkDb: KVDatabase + 'static> EvmExecutor<'_, CodeDb, ZkD
             let rlp_bytes = tx.rlp();
             tx_rlps.push(rlp_bytes.clone());
             env.tx.scroll.rlp_bytes = Some(rlp_bytes);
-            if env.block.number == U256::from(140) {
-                dev_info!("{env:?}");
-            }
 
             dev_trace!("{env:#?}");
             {
